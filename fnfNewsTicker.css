@@ -37,19 +37,16 @@
 }
 
 
-article {
-            padding: 10px;
-            -webkit-columns: 3 150px;
-            -moz-columns: 3 150px;
-            columns: 3 150px;
+article.fnfUtilitySetting {
+            padding: 0px 10px 0px 10px;
+            -webkit-columns: 3 200px;
+            -moz-columns: 3 200px;
+            columns: 3 200px;
             -webkit-column-rule: 1px dotted #ddd;
             -moz-column-rule: 1px dotted #ddd;
             column-rule: 1px dotted #ddd;
 }
-
-   h4 {
-    font-weight: 700;
-  }
+ 
 
   #fnfFirstPara {
     margin-top: -20px;
@@ -74,7 +71,6 @@ article {
  }
 
  #fnfSelectedChannel{
-     text-align: center;
      border-bottom: 1px solid gray;
      padding-top: 5px;
      padding-bottom: 5px;
@@ -82,8 +78,12 @@ article {
      font-weight: bold;
  }
 
+  
+
  .fnfNewsLogo {
      height: 1em;
      width: 1.5em;
      margin-right: 0.5em;
  }
+
+  

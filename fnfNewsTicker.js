@@ -1,4 +1,5 @@
 function loadRssPushToDom(url, logoSrc) {
+
 	console.log(url + " " + logoSrc);
 	//feed to parse
 	var feed = "https://cors-anywhere.herokuapp.com/" + url;
@@ -17,26 +18,31 @@ function loadRssPushToDom(url, logoSrc) {
 
 			var highlights = [];
 			$(data).find("item").each(function () {
-				 fnfNewsEl = $(this);
+				fnfNewsEl = $(this);
 
-				 fnfNewsTitle = fnfNewsEl.find('title').text();
-				 fnfNewsLink = fnfNewsEl.find('link').text();
+				fnfNewsTitle = fnfNewsEl.find('title').text();
+				fnfNewsLink = fnfNewsEl.find('link').text();
 
-				if(fnfNewsTitle)
+				if (fnfNewsTitle)
 					highlights.push('<a href="' + fnfNewsLink + '"><img class="fnfNewsLogo" src="' + logoSrc + '" />' + fnfNewsTitle + '</a>');
 
 
 			});
-			if(highlights.length > 0){
+			if (highlights.length > 0) {
 				$('#fnfShowingNews').html(highlights);
 			} else {
-				$('#fnfShowingNews').html('No news found in ' + getSelectedChannel() + '!! Try another channel !');
+				$('#fnfShowingNews').html('No news found in ' + getSelectedChannel().name + '!! Try another channel !');
 			}
+			fnfCurrentRssText = highlights;
 
+		},
 
+		error: function (xhr, ajaxOptions, thrownError) {
+			$('#fnfShowingNews').html('<span style="font-weight: bold;">' + ajaxOptions.toUpperCase() + '</span> !! Try another channel or reload page !');
 		}
+
 	});
-	$('#fnfShowingNews').html('Loading news from - ' + getSelectedChannel());
+	$('#fnfShowingNews').html('Loading news from - ' + getSelectedChannel().name);
 }
 
 function showSetting() {
@@ -44,10 +50,31 @@ function showSetting() {
 	$('#settingsMenu').slideToggle();
 	$('#fnfNewsfeedNews').slideToggle();
 
-	if (fnfSettingsMenuClicked % 2 == 1 && fnfChannelChanged) {
-		loadSelectedChannelRss();
-		fnfChannelChanged = false;
+	if (fnfSettingsMenuClicked % 2 == 1) {
+		if (fnfChannelChanged) {
+
+			loadSelectedChannelRss();
+			fnfChannelChanged = false;
+		}
+
+		if (fnfScrollSpeedChanged) {
+			fnfScrollSpeedChanged = false;
+
+
+			$('#fnfShowingNews').html(fnfCurrentRssText);
+
+		}
+
+		if (fnfScrollDirectionChanged) {
+			fnfScrollDirectionChanged = false;
+
+
+			$('#fnfShowingNews').html(fnfCurrentRssText);
+
+		}
 	}
+
+
 
 	fnfSettingsMenuClicked++;
 }
@@ -82,10 +109,22 @@ function loadHtmlPushToDom() {
 window.onload = function () {
 
 	/**
+	 * Global current rss text
+	 */
+
+	fnfCurrentRssText = '';
+	/**
 	 * Settings menu click count
 	 */
 
 	fnfSettingsMenuClicked = 0;
+
+	/**
+	 * Global variables
+	 */
+	fnfChannelChanged = false;
+	fnfScrollSpeedChanged = false;
+	fnfScrollDirectionChanged = false;
 
 	/**
      * Retrieving base path of files
@@ -103,92 +142,92 @@ window.onload = function () {
 			{
 				name: 'Wallstreet Journal - World News',
 				rss: 'http://jp.wsj.com/xml/rss/3_7085.xml',
-				icon: basePath + 'images/WSJ.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/WSJ.jpg'
 			},
 			{
 				name: 'Fox News Science',
 				rss: 'http://feeds.foxnews.com/foxnews/scitech',
-				icon: basePath + 'images/fox_news.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/fox_news.jpg'
 			},
 			{
 				name: 'CNN – Top Stories',
 				rss: 'http://rss.cnn.com/rss/cnn_topstories.rss',
-				icon: basePath + 'images/cnn.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/cnn.jpg'
 			},
 			{
 				name: 'Time Magazine – Top Stories',
 				rss: 'http://feeds.feedburner.com/time/topstories',
-				icon: basePath + 'images/time.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/time.jpg'
 			},
 			{
 				name: 'NYTimes',
 				rss: 'http://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml',
-				icon: basePath + 'images/nyt.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/nyt.jpg'
 			},
 			{
 				name: 'Yahoo News',
 				rss: 'https://www.yahoo.com/news/rss/topstories',
-				icon: basePath + 'images/yahoo.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/yahoo.jpg'
 			},
 			{
 				name: 'Washington Post',
 				rss: 'http://feeds.washingtonpost.com/rss/world',
-				icon: basePath + 'images/washingtonpost.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/washingtonpost.jpg'
 			},
 			{
 				name: 'Vox',
 				rss: 'https://www.vox.com/rss/index.xml',
-				icon: basePath + 'images/vox.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/vox.jpg'
 			},
 			{
 				name: 'BBC News',
 				rss: 'http://feeds.bbci.co.uk/news/world/rss.xml',
-				icon: basePath + 'images/bbc.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/bbc.jpg'
 			},
 			{
 				name: 'Huffington Post',
 				rss: 'https://www.huffingtonpost.com/section/front-page/feed',
-				icon: basePath + 'images/huffington.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/huffington.jpg'
 			},
 			{
 				name: 'ABC News',
 				rss: 'http://abcnews.go.com/abcnews/topstories',
-				icon: basePath + 'images/ABC_News.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/ABC_News.jpg'
 			},
 			{
 				name: 'Reuters',
 				rss: 'http://feeds.reuters.com/reuters/topNews?irpc=69',
-				icon: basePath + 'images/reuters.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/reuters.jpg'
 			},
 			{
 				name: 'Drudge Report',
 				rss: 'http://www.drudgereportfeed.com/rss.xml',
-				icon: basePath + 'images/drudge.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/drudge.jpg'
 			},
 			{
 				name: 'Market Watch',
 				rss: 'http://www.marketwatch.com/rss/topstories/',
-				icon: basePath + 'images/marketW.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/marketW.jpg'
 			},
 			{
 				name: 'Salon',
 				rss: 'https://www.salon.com/feed/',
-				icon: basePath + 'images/salon.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/salon.jpg'
 			},
 			{
 				name: 'New Yorker',
 				rss: 'http://www.newyorker.com/services/rss/feeds/everything.xml',
-				icon: basePath + 'images/newyorker.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/newyorker.jpg'
 			},
 			{
 				name: 'Daily Mail',
 				rss: 'http://www.dailymail.co.uk/articles.rss',
-				icon: basePath + 'images/daily-mail-logo.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/daily-mail-logo.jpg'
 			},
 			{
 				name: 'New York Post',
 				rss: 'https://nypost.com/feed/',
-				icon: basePath + 'images/newyorkpost.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/newyorkpost.jpg'
 			}
 
 		]
@@ -200,29 +239,29 @@ window.onload = function () {
 			{
 				name: 'ESPNCricinfo',
 				rss: 'http://www.espncricinfo.com/ci/content/rss/feeds_rss_cricket.html',
-				icon: basePath + 'images/espn.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/espn.jpg'
 
 			},
 			{
 				name: 'Cricbuzz',
 				rss: 'http://live-feeds.cricbuzz.com/CricbuzzFeed',
-				icon: basePath + 'images/cricbuzz.png'
+				icon: basePath + 'fnf_news_ticker_logo/cricbuzz.jpg'
 
 			},
 			{
 				name: 'BBC Sports',
 				rss: 'http://feeds.bbci.co.uk/sport/rss.xml?edition=int#',
-				icon: basePath + 'images/bbcsports.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/bbcsports.jpg'
 			},
 			{
 				name: 'ESPN',
 				rss: 'http://www.espn.com/espn/rss/news',
-				icon: basePath + 'images/espn.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/espn.jpg'
 			},
 			{
 				name: 'NBA',
 				rss: 'http://www.nba.com/rss/nba_rss.xml',
-				icon: basePath + 'images/nba.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/nba.jpg'
 			},
 			{
 				name: 'NFL',
@@ -232,43 +271,43 @@ window.onload = function () {
 			{
 				name: 'Yahoo Sports',
 				rss: 'https://www.yahoo.com/news/rss/sports',
-				icon: basePath + 'images/yahoosports.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/yahoosports.jpg'
 			},
 
 			{
 				name: 'Fox Sports',
 				rss: 'https://api.foxsports.com/v1/rss?partnerKey=zBaFxRyGKCfxBagJG9b8pqLyndmvo7UU',
-				icon: basePath + 'images/foxSports.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/foxSports.jpg'
 			},
 			{
 				name: 'Talk Sports',
 				rss: 'https://talksport.com/rss/sports-news/all/feed',
-				icon: basePath + 'images/talksports.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/talksports.jpg'
 			},
 			{
 				name: 'CBS Sports',
 				rss: 'https://rss.cbssports.com/rss/headlines/',
-				icon: basePath + 'images/cbssports.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/cbssports.jpg'
 			},
 			{
 				name: 'FIFA',
 				rss: 'www.fifa.com/rss/index.xml',
-				icon: basePath + 'images/fifa.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/fifa.jpg'
 			},
 			{
 				name: 'NU Sports',
 				rss: 'http://nusports.com/rss_feeds.aspx',
-				icon: basePath + 'images/nusports.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/nusports.jpg'
 			},
 			{
 				name: 'Sport1.de',
 				rss: 'https://www.sport1.de/news.rss',
-				icon: basePath + 'images/sport1.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/sport1.jpg'
 			},
 			{
 				name: 'ISSF',
 				rss: 'https://www.issf-sports.org/rss/news.html',
-				icon: basePath + 'images/issf.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/issf.jpg'
 			}
 
 		]
@@ -280,102 +319,102 @@ window.onload = function () {
 			{
 				name: 'Wallstreet Journal - Technology',
 				rss: 'http://jp.wsj.com/xml/rss/3_7455.xml',
-				icon: basePath + 'images/WSJ.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/WSJ.jpg'
 			},
 			{
 				name: 'Techcrunch',
 				rss: 'http://feeds.feedburner.com/Techcrunch',
-				icon: basePath + 'images/techcrunch.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/techcrunch.jpg'
 			},
 			{
 				name: 'Wired',
 				rss: 'http://feeds.wired.com/wired/index',
-				icon: basePath + 'images/wiredtech.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/wiredtech.jpg'
 			},
 			{
 				name: 'NYTimes – Technology',
 				rss: 'http://feeds.nytimes.com/nyt/rss/Technology',
-				icon: basePath + 'images/nytimesTech.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/nytimesTech.jpg'
 			},
 			{
 				name: 'MacWorld',
 				rss: 'http://rss.macworld.com/macworld/feeds/main',
-				icon: basePath + 'images/macworld.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/macworld.jpg'
 			},
 			{
 				name: 'PCWorld',
 				rss: 'http://feeds.pcworld.com/pcworld/latestnews',
-				icon: basePath + 'images/pcworld.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/pcworld.jpg'
 			},
 			{
 				name: 'Techworld',
 				rss: 'http://www.techworld.com/news/rss',
-				icon: basePath + 'images/techworld.webp.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/techworld.webp.jpg'
 			},
 			{
 				name: 'LifeHacker',
 				rss: 'https://lifehacker.com/rss',
-				icon: basePath + 'images/lifehacker-logo.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/lifehacker-logo.jpg'
 			},
 			{
 				name: 'ReadWriteWeb',
 				rss: 'http://feeds.feedburner.com/readwriteweb',
-				icon: basePath + 'images/readwriteweb.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/readwriteweb.jpg'
 			},
 			{
 				name: 'Engadget',
 				rss: 'http://www.engadget.com/rss-full.xml',
-				icon: basePath + 'images/engadget.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/engadget.jpg'
 			},
 			{
 				name: 'Mashable',
 				rss: 'http://feeds.mashable.com/Mashable',
-				icon: basePath + 'images/mashable.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/mashable.jpg'
 			},
 			{
 				name: 'O’Reilly Rada',
 				rss: 'http://feeds.feedburner.com/oreilly/radar/atom',
-				icon: basePath + 'images/orelay.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/orelay.jpg'
 			},
 			{
 				name: 'Gizmodo',
 				rss: 'https://gizmodo.com/rss',
-				icon: basePath + 'images/Gizmodo.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/Gizmodo.jpg'
 			},
 			{
 				name: 'Technology Review',
 				rss: 'https://www.technologyreview.com/topnews.rss',
-				icon: basePath + 'images/mitTechReview.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/mitTechReview.jpg'
 			},
 			{
 				name: 'VentureBeat',
 				rss: 'https://venturebeat.com/2013/09/05/venturebeat-rss/',
-				icon: basePath + 'images/venturebeat.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/venturebeat.jpg'
 			},
 			{
 				name: 'Recode.net',
 				rss: 'http://www.recode.net/rss/index.xml',
-				icon: basePath + 'images/Recode.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/Recode.jpg'
 			},
 			{
 				name: 'Computer World',
 				rss: 'http://www.computerworld.com/index.rss',
-				icon: basePath + 'images/computerworld.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/computerworld.jpg'
 			},
 			{
 				name: 'MakeUsOf',
 				rss: 'http://feeds.feedburner.com/Makeuseof',
-				icon: basePath + 'images/makesof.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/makesof.jpg'
 			},
 			{
 				name: 'CNet.com',
 				rss: 'http://www.cnet.com/rss/news',
-				icon: basePath + 'images/cnet.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/cnet.jpg'
 			},
 			{
 				name: 'HowToGeek',
 				rss: 'http://feeds.howtogeek.com/HowToGeek',
-				icon: basePath + 'images/howtogeek.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/howtogeek.jpg'
 			}
 
 		]
@@ -387,73 +426,73 @@ window.onload = function () {
 			{
 				name: 'Wallstreet Journal - Business',
 				rss: 'http://jp.wsj.com/xml/rss/3_7014.xml',
-				icon: basePath + 'images/WSJ.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/WSJ.jpg'
 			},
 			{
 				name: 'Atlantic Business Channel',
 				rss: 'http://feeds.feedburner.com/AtlanticBusinessChannel',
-				icon: basePath + 'images/AtlanticBusinessChannel.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/AtlanticBusinessChannel.jpg'
 			},
 			{
 				name: 'Entrepeneur.com',
 				rss: 'feeds.feedburner.com/entrepreneur/latest',
-				icon: basePath + 'images/entrepreneur.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/entrepreneur.jpg'
 			},
 			{
 				name: 'Harvard Business',
 				rss: 'http://feeds.harvardbusiness.org/harvardbusiness/',
-				icon: basePath + 'images/harvardbusiness.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/harvardbusiness.jpg'
 			},
 			{
 				name: 'Freakonomics',
 				rss: 'http://freakonomics.com//feed/',
-				icon: basePath + 'images/freaknomics.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/freaknomics.jpg'
 			},
 			{
 				name: 'The Big Picture',
 				rss: 'http://feeds.feedburner.com/TheBigPicture',
-				icon: basePath + 'images/bigpicture.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/bigpicture.jpg'
 			},
 			{
 				name: 'Fortune',
 				rss: 'http://fortune.com/feed/',
-				icon: basePath + 'images/fortune.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/fortune.jpg'
 			},
 			{
 				name: 'Economist',
 				rss: 'http://www.economist.com/rss/the_world_this_week_rss.xml',
-				icon: basePath + 'images/economis.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/economis.jpg'
 			},
 			{
 				name: 'The Non-Profit Times',
 				rss: 'http://www.thenonprofittimes.com/feed/',
-				icon: basePath + 'images/nonprofittimes.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/nonprofittimes.jpg'
 			},
 			{
 				name: 'SBN Online',
 				rss: 'http://www.sbnonline.com/feed/',
-				icon: basePath + 'images/sbn.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/sbn.jpg'
 			},
 			{
 				name: 'McKinsey',
 				rss: 'https://www.mckinsey.com/insights/rss.aspx',
-				icon: basePath + 'images/mckinsey-and-co.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/mckinsey-and-co.jpg'
 			},
 
 			{
 				name: 'Business Insider',
 				rss: 'http://feeds2.feedburner.com/businessinsider',
-				icon: basePath + 'images/businessinsider.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/businessinsider.jpg'
 			},
 			{
 				name: 'Calculated Risk',
 				rss: 'http://feeds.feedburner.com/CalculatedRisk',
-				icon: basePath + 'images/calculatedrisc.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/calculatedrisc.jpg'
 			},
 			{
 				name: 'Huffington Post – Business',
 				rss: 'https://www.huffingtonpost.com/section/business/feed',
-				icon: basePath + 'images/huffington.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/huffington.jpg'
 			}
 
 		]
@@ -465,67 +504,67 @@ window.onload = function () {
 			{
 				name: 'Slate.com – Politics',
 				rss: 'http://www.slate.com/articles/news_and_politics/politics.teaser.all.10.rss/',
-				icon: basePath + 'images/slatepolitics.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/slatepolitics.jpg'
 			},
 			{
 				name: 'World Affair Journal',
 				rss: 'http://www.worldaffairsjournal.org/essay-feed.xml',
-				icon: basePath + 'images/worldaffair.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/worldaffair.jpg'
 			},
 			{
 				name: 'Fox News – Politics',
 				rss: 'http://feeds.foxnews.com/foxnews/politics',
-				icon: basePath + 'images/fox_news.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/fox_news.jpg'
 			},
 			{
 				name: 'CNN Politics',
 				rss: 'http://rss.cnn.com/rss/cnn_allpolitics.rss',
-				icon: basePath + 'images/cnn.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/cnn.jpg'
 			},
 			{
 				name: 'Reuters – Politcs',
 				rss: 'http://feeds.reuters.com/Reuters/PoliticsNews',
-				icon: basePath + 'images/reuters.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/reuters.jpg'
 			},
 			{
 				name: 'USA Today – Politics',
 				rss: 'http://rssfeeds.usatoday.com/TP-OnPolitics',
-				icon: basePath + 'images/usatoday.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/usatoday.jpg'
 			},
 			{
 				name: 'Washington Examiner',
 				rss: 'http://www.washingtonexaminer.com/rss/politics',
-				icon: basePath + 'images/washingtonexaminer.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/washingtonexaminer.jpg'
 			},
 			{
 				name: 'Wallstreet Journal – Politics',
 				rss: 'http://online.wsj.com/xml/rss/3_7087.xml',
-				icon: basePath + 'images/WSJ.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/WSJ.jpg'
 			},
 			{
 				name: 'The Nation',
 				rss: 'https://www.thenation.com/feed/?post_type=article',
-				icon: basePath + 'images/thenation.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/thenation.jpg'
 			},
 			{
 				name: 'Daily Signal',
 				rss: 'http://dailysignal.com//feed/',
-				icon: basePath + 'images/dailysignal.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/dailysignal.jpg'
 			},
 			{
 				name: 'MSNBC',
 				rss: 'http://www.msnbc.com/feeds/latest',
-				icon: basePath + 'images/msnbc-logo-card.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/msnbc-logo-card.jpg'
 			},
 			{
 				name: 'Politico',
 				rss: 'https://www.politico.com/rss/politics.xml',
-				icon: basePath + 'images/politico-logo.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/politico-logo.jpg'
 			},
 			{
 				name: 'Realwire',
 				rss: 'https://www.realwire.com/rss/feeds.asp?cat=Politics',
-				icon: basePath + 'images/realwire.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/realwire.jpg'
 			}
 
 		]
@@ -537,64 +576,64 @@ window.onload = function () {
 			{
 				name: 'Gamespot',
 				rss: 'https://www.gamespot.com/feeds/mashup/',
-				icon: basePath + 'images/gamespot.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/gamespot.jpg'
 			},
 			{
 				name: 'Nintendo Life',
 				rss: 'http://www.nintendolife.com/feeds/latest',
-				icon: basePath + 'images/ni.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/ni.jpg'
 			},
 			{
 				name: 'Indiegames.com',
 				rss: 'http://www.indiegames.com/atom.xml',
-				icon: basePath + 'images/indiegames.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/indiegames.jpg'
 			},
 			{
 				name: 'Arstechnica – Gaming',
 				rss: 'http://feeds.arstechnica.com/arstechnica/gaming/',
-				icon: basePath + 'images/arstechnica.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/arstechnica.jpg'
 			},
 			{
 				name: 'Polygon',
 				rss: 'https://www.polygon.com/rss/index.xml',
-				icon: basePath + 'images/politico-logo.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/politico-logo.jpg'
 			},
 			{
 				name: 'Touch Arcade',
 				rss: 'http://toucharcade.com/feed/',
-				icon: basePath + 'images/toucharcade_logo_newline.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/toucharcade_logo_newline.jpg'
 			},
 			{
 				name: 'Game Informer',
 				rss: 'http://www.gameinformer.com/p/rss.aspx',
-				icon: basePath + 'images/game_informer_gameinformer_logo.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/game_informer_gameinformer_logo.jpg'
 			},
 			{
 				name: 'Xbox.com – News',
 				rss: 'http://news.xbox.com/feed',
-				icon: basePath + 'images/xbox-logo-100571878-large.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/xbox-logo-100571878-large.jpg'
 			},
 			{
 				name: 'Reddit',
 				rss: 'https://www.reddit.com/r/gamers/.rss',
-				icon: basePath + 'images/reddit.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/reddit.jpg'
 			},
 
 			{
 				name: 'Rock Paper Shotgun',
 				rss: 'https://www.rockpapershotgun.com/feed',
-				icon: basePath + 'images/rockpaper.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/rockpaper.jpg'
 			},
 			{
 				name: 'pcgamesn.com',
 				rss: 'https://www.pcgamesn.com/rss',
-				icon: basePath + 'images/PCGames.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/PCGames.jpg'
 			},
 
 			{
 				name: 'Kotaku',
 				rss: 'https://kotaku.com/rss',
-				icon: basePath + 'images/kotaku.jpg'
+				icon: basePath + 'fnf_news_ticker_logo/kotaku.jpg'
 			}
 
 		]
@@ -618,7 +657,7 @@ window.onload = function () {
 	 */
 	var css = document.createElement('link');
 
-	css.href = basePath + 'main.css';
+	css.href = basePath + 'fnfNewsTicker.css';
 	css.rel = 'stylesheet';
 
 	/**
@@ -642,6 +681,7 @@ window.onload = function () {
 		 */
 		document.head.appendChild(jqueryScript);
 
+
 		jqueryScript.onload = function () {
 			createNewsFeedPushToDom();
 		}
@@ -655,22 +695,39 @@ window.onload = function () {
 
 function createNewsFeedPushToDom() {
 
-	$('#fnfSettingsIcon').attr('src', basePath + 'images/settings.png');
+	$('#fnfSettingsIcon').attr('src', basePath + 'fnf_news_ticker_logo/settings.png');
 
 	var i, j, len = fnfChannels.length, channelItem, inCategoryChannel;
 
-	var selectedChannelName = getSelectedChannel();
-	var channelMenu = '<div  id="fnfSelectedChannel"> Selected Channel - <span  id="fnfSelectedChannelName">' + selectedChannelName + '</span></div>';
+	var selectedChannelName = getSelectedChannel().name;
 
-	channelMenu += "<article>";
+
+	var channelMenu = '<article id="fnfSelectedChannel"  class="fnfUtilitySetting"> <p  id="fnfSelectedChannelName">' + selectedChannelName + '</p>';
+
+	channelMenu += `<p>		<label for="fnfScrollDirection">Direction</label>
+								<select id="fnfScrollDirection" name="fnfScrollDirection" class="styled-select semi-square" onchange="fnfChangeDirection(this)">
+									<option value="-1">Choose Scrolling Direction</option>
+									<option value="1">Left to Right</option>
+									<option value="2">Right to Left</option>
+								</select>
+						</p>`;
+
+	channelMenu += `<p>
+						<label for="fnfScrollSpeed">Speed</label>
+						<input type="range" id="fnfScrollSpeed" name="fnfScrollSpeed" 
+							min="1" max="12" value="6" step="1" onchange="fnfChangeSpeed(this.value)"/>
+					</p>
+					</article>`;
+
+	channelMenu += "<article class='fnfUtilitySetting'>";
 
 	for (i = 0; i < len; i++) {
 		channelItem = fnfChannels[i];
 
 		if (i == 0) {
-			channelMenu += "<p id='fnfFirstPara'><h4>" + channelItem.category + "</h4><select class='styled-select semi-square' onchange='fnfSelectChannel(this," + i + ")'>";
+			channelMenu += "<p id='fnfFirstPara'><h4>" + channelItem.category + "</h4><select class='styled-select semi-square fnfChannelSelect' onchange='fnfSelectChannel(this," + i + ")'>";
 		} else {
-			channelMenu += "<p><h4>" + channelItem.category + "</h4><select class='styled-select semi-square' onchange='fnfSelectChannel(this," + i + ")'>";
+			channelMenu += "<p><h4>" + channelItem.category + "</h4><select class='styled-select semi-square fnfChannelSelect' onchange='fnfSelectChannel(this," + i + ")'>";
 		}
 
 		channelMenu += "<option value='-1'>Select One</option>";
@@ -693,24 +750,28 @@ function createNewsFeedPushToDom() {
 
 	document.getElementById('settingsMenu').innerHTML = channelMenu;
 
+
 	loadSelectedChannelRss();
-	selectTags = document.getElementsByTagName("select");
+
+	/**
+	 * Global variable of select tags
+	 */
+	selectTags = document.querySelectorAll("select.fnfChannelSelect");
+
+
+
+	$('#fnfScrollDirection')[0].selectedIndex = getScrollDirection();
+	$('#fnfScrollSpeed').attr('value', getScrollSpeed());
+
+	var dir = ['', 'right', 'left'];
+
+	$('#fnfShowingNews').attr('direction', dir[getScrollDirection()]);
+	$('#fnfShowingNews').attr('scrollamount', getScrollSpeed());
 }
 
 
 function loadSelectedChannelRss() {
-	var choosedChannel;
-
-
-	if (localStorage.getItem('fnfSelectedChannel') === null) {
-
-		choosedChannel = fnfChannels[0].channels[2];
-
-	} else {
-
-		choosedChannel = JSON.parse(localStorage.getItem('fnfSelectedChannel'));
-
-	}
+	var choosedChannel = getSelectedChannel();
 
 	loadRssPushToDom(choosedChannel.rss, choosedChannel.icon);
 }
@@ -718,11 +779,14 @@ function loadSelectedChannelRss() {
 
 function fnfSelectChannel(ch, cat) {
 
+
 	if (ch.value != -1) {
+
 
 		for (var i = 0; i < selectTags.length; i++) {
 			if (i != cat && selectTags[i].selectedIndex != 0) selectTags[i].selectedIndex = 0;
 		}
+
 
 		fnfChannelChanged = true;
 		var selectedChannel = fnfChannels[cat].channels[ch.value];
@@ -752,11 +816,40 @@ function getSelectedChannel() {
 		channel = JSON.parse(localStorage.getItem('fnfSelectedChannel'));
 	}
 
-	return channel.name;
+	return channel;
 }
 
 
+function fnfChangeDirection(select) {
+	if (select.value == -1) {
+		select.selectedIndex = getScrollDirection();
+	} else {
+		var dir = ['', 'right', 'left'];
+		$('#fnfShowingNews').attr('direction', dir[select.value]);
+		localStorage.setItem('fnfScrollDirection', select.value);
+		fnfScrollDirectionChanged = true;
+	}
 
+}
 
+function fnfChangeSpeed(value) {
+	$('#fnfShowingNews').attr('scrollamount', value);
+	localStorage.setItem('fnfSpeed', value);
+	fnfScrollSpeedChanged = true;
+}
 
+function getScrollSpeed() {
+	if (localStorage.getItem('fnfSpeed') === null) {
+		return 6;
+	} else {
+		return parseInt(localStorage.getItem('fnfSpeed'));
+	}
+}
 
+function getScrollDirection() {
+	if (localStorage.getItem('fnfScrollDirection') === null) {
+		return 2;
+	} else {
+		return parseInt(localStorage.getItem('fnfScrollDirection'));
+	}
+}
