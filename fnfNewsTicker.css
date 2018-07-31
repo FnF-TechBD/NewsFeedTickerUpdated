@@ -15,13 +15,22 @@
 #fnfNewsfeedNews , #settingsMenuItem {
     margin: 2.5px 0px 2.5px 0px;
 }
-
-
-#fnfNewsfeedNews a:hover {
-    text-decoration: none;
-}
-
  
+ /* Make it a marquee */
+.marquee{
+    margin: 0 auto;
+    overflow: hidden;
+    white-space: nowrap;
+    box-sizing: border-box;
+ 
+}
+ 
+
+/* Make it move */
+@keyframes marquee {
+    0%   { text-indent: 27.5em; }
+    100% { text-indent: -265em; }
+}
 
 #fnfShowingNews a {
     margin-right : 20px;
@@ -46,7 +55,6 @@ article.fnfUtilitySetting {
             -moz-column-rule: 1px dotted #ddd;
             column-rule: 1px dotted #ddd;
 }
- 
 
   #fnfFirstPara {
     margin-top: -20px;
